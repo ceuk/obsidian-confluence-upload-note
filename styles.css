@@ -1,0 +1,38 @@
+.confluence-upload-progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50px;
+    margin: 20px 0;
+}
+
+.confluence-upload-spinner {
+    font-size: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.confluence-upload-modal {
+    max-width: 500px;
+}
+
+.confluence-upload-modal .setting-item {
+    border: none;
+}
+
+.confluence-upload-modal input[type="text"],
+.confluence-upload-modal input[type="password"] {
+    width: 100%;
+}
+
+.confluence-upload-modal button {
+    margin-left: 10px;
+}
