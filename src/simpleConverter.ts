@@ -1,4 +1,4 @@
-import { marked } from 'marked';
+import { marked, Tokens } from 'marked';
 import { MermaidRenderer } from './mermaidRenderer';
 
 export class SimpleConfluenceConverter {
@@ -16,7 +16,7 @@ export class SimpleConfluenceConverter {
 
         // Override code blocks for Confluence format with CDATA
         // In marked v16+, the renderer receives a token object, not strings directly
-        renderer.code = function(token: any): string {
+        renderer.code = function(token: Tokens.Code): string {
             // Extract the actual code text and language from the token
             const code = token.text || token.raw || '';
             const lang = token.lang || 'text';
@@ -60,7 +60,7 @@ export class SimpleConfluenceConverter {
 
         // Override inline code rendering
         // In marked v16+, the renderer receives a token object
-        renderer.codespan = function(token: any): string {
+        renderer.codespan = function(token: Tokens.Codespan): string {
             const text = token.text || token.raw || '';
             return `<code>${text}</code>`;
         };
@@ -79,9 +79,34 @@ export class SimpleConfluenceConverter {
 
         // Override image rendering for Confluence
         // In marked v16+, the renderer receives a token object
-        renderer.image = function(token: any): string {
+        renderer.image = function(token: Tokens.Image): string {
             const href = token.href || '';
             return `<ac:image><ri:url ri:value="${href}" /></ac:image>`;
+        };
+
+        // Override list item rendering to fix task list checkboxes
+        renderer.listitem = function(token: Tokens.ListItem): string {
+            // Parse inline tokens (like **bold**, *italic*, etc.) in the list item
+            let text = '';
+            if (token.tokens && token.tokens.length > 0) {
+                // Use the parser to process inline tokens
+                text = this.parser.parseInline(token.tokens);
+            } else {
+                text = token.text || '';
+            }
+
+            const task = token.task;
+            const checked = token.checked;
+
+            if (task) {
+                // For task lists, ensure the checkbox is self-closing
+                const checkbox = checked
+                    ? '<input type="checkbox" checked="checked" disabled="disabled" />'
+                    : '<input type="checkbox" disabled="disabled" />';
+                text = checkbox + ' ' + text;
+            }
+
+            return '<li>' + text + '</li>\n';
         };
 
         // Configure marked with our custom renderer

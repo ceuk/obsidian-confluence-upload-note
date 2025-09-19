@@ -39,6 +39,37 @@ export interface ConfluenceUpdateRequest {
     };
 }
 
+export interface ConfluenceCreateRequest {
+    type: string;
+    title: string;
+    space: {
+        key: string;
+    };
+    body: {
+        storage: {
+            value: string;
+            representation: string;
+        };
+    };
+    ancestors?: Array<{
+        id: string;
+    }>;
+}
+
+export interface ConfluenceApiResponse {
+    id: string;
+    type: string;
+    status: string;
+    title: string;
+    version: {
+        number: number;
+    };
+    _links?: {
+        base: string;
+        webui: string;
+    };
+}
+
 export interface ConfluenceApiError {
     statusCode: number;
     message: string;

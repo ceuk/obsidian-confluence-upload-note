@@ -1,11 +1,10 @@
 {
   "id": "confluence-upload",
   "name": "Confluence Upload",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minAppVersion": "0.15.0",
   "description": "Upload notes directly to Confluence pages",
   "author": "ceuk",
   "authorUrl": "https://github.com/ceuk",
   "isDesktopOnly": true
 }
-

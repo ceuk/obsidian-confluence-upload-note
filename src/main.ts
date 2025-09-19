@@ -20,11 +20,7 @@ export default class ConfluenceUploadPlugin extends Plugin {
         this.addCommand({
             id: 'upload-current-note',
             name: 'Upload current note to Confluence',
-            callback: () => this.uploadCurrentNote(),
-            hotkeys: [{
-                modifiers: ['Mod', 'Shift'],
-                key: 'U'
-            }]
+            callback: () => this.uploadCurrentNote()
         });
 
         // Add command to create new page
@@ -168,15 +164,17 @@ export default class ConfluenceUploadPlugin extends Plugin {
                                     `<!--MERMAID_PLACEHOLDER_${item.index}-->`,
                                     attachmentMarkup
                                 );
-                            } catch (attachError: any) {
+                            } catch (attachError: unknown) {
                                 console.error('===== MERMAID ATTACHMENT UPLOAD ERROR =====');
                                 console.error(`Failed to upload mermaid diagram ${item.index}`);
                                 console.error('Error:', attachError);
-                                console.error('Error message:', attachError.message);
-                                console.error('Error stack:', attachError.stack);
+                                const errorMessage = attachError instanceof Error ? attachError.message : String(attachError);
+                                const errorStack = attachError instanceof Error ? attachError.stack : undefined;
+                                console.error('Error message:', errorMessage);
+                                if (errorStack) console.error('Error stack:', errorStack);
 
                                 // If it's a 403, provide more context
-                                if (attachError.message?.includes('403')) {
+                                if (errorMessage.includes('403')) {
                                     console.error('403 Forbidden: This usually means:');
                                     console.error('- You don\'t have permission to add attachments to this page');
                                     console.error('- The page might be restricted');
@@ -271,15 +269,17 @@ export default class ConfluenceUploadPlugin extends Plugin {
                                     `<!--MERMAID_PLACEHOLDER_${item.index}-->`,
                                     attachmentMarkup
                                 );
-                            } catch (attachError: any) {
+                            } catch (attachError: unknown) {
                                 console.error('===== MERMAID ATTACHMENT UPLOAD ERROR =====');
                                 console.error(`Failed to upload mermaid diagram ${item.index}`);
                                 console.error('Error:', attachError);
-                                console.error('Error message:', attachError.message);
-                                console.error('Error stack:', attachError.stack);
+                                const errorMessage = attachError instanceof Error ? attachError.message : String(attachError);
+                                const errorStack = attachError instanceof Error ? attachError.stack : undefined;
+                                console.error('Error message:', errorMessage);
+                                if (errorStack) console.error('Error stack:', errorStack);
 
                                 // If it's a 403, provide more context
-                                if (attachError.message?.includes('403')) {
+                                if (errorMessage.includes('403')) {
                                     console.error('403 Forbidden: This usually means:');
                                     console.error('- You don\'t have permission to add attachments to this page');
                                     console.error('- The page might be restricted');

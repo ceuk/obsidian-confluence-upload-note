@@ -24,7 +24,7 @@ export class MarkdownToConfluenceConverter {
         // Extract fenced code blocks first
         content = content.replace(
             /```(\w*)\n([\s\S]*?)```/g,
-            (match, lang, code) => {
+            (_, lang, code) => {
                 const placeholder = this.createCodeBlockPlaceholder();
                 const confluenceBlock = this.createConfluenceCodeBlock(lang || 'text', code);
                 this.codeBlocks.set(placeholder, confluenceBlock);
@@ -35,7 +35,7 @@ export class MarkdownToConfluenceConverter {
         // Extract inline code
         content = content.replace(
             /`([^`\n]+)`/g,
-            (match, code) => {
+            (_, code) => {
                 const placeholder = this.createCodeBlockPlaceholder();
                 this.codeBlocks.set(placeholder, `<code>${this.escapeHtml(code)}</code>`);
                 return placeholder;
@@ -287,12 +287,6 @@ export class MarkdownToConfluenceConverter {
         }
 
         return result.join('\n');
-    }
-
-    private escapeGenerics(content: string): string {
-        // Skip escaping - Confluence handles this internally
-        // The issue was that we were escaping HTML tags that we just created
-        return content;
     }
 
     private escapeHtml(text: string): string {

@@ -36,3 +36,11 @@
 .confluence-upload-modal button {
     margin-left: 10px;
 }
+
+.mermaid-render-container {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    width: 1000px;
+    visibility: hidden;
+}

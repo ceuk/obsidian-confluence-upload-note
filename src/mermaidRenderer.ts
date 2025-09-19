@@ -77,11 +77,7 @@ export class MermaidRenderer {
             // Create a visible container for rendering (hidden containers can cause getBBox issues)
             const container = document.createElement('div');
             container.id = id;
-            container.style.position = 'absolute';
-            container.style.top = '-9999px';
-            container.style.left = '-9999px';
-            container.style.width = '1000px';
-            container.style.visibility = 'hidden';
+            container.addClass('mermaid-render-container');
 
             // Add to body
             document.body.appendChild(container);

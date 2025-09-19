@@ -1,5 +1,5 @@
 import { Notice, requestUrl, RequestUrlParam } from 'obsidian';
-import { ConfluenceSettings, ConfluencePage, ConfluenceUpdateRequest, ConfluenceApiError } from './types';
+import { ConfluenceSettings, ConfluencePage, ConfluenceUpdateRequest, ConfluenceCreateRequest, ConfluenceApiResponse, ConfluenceApiError } from './types';
 
 export class ConfluenceAPI {
     private settings: ConfluenceSettings;
@@ -210,7 +210,7 @@ export class ConfluenceAPI {
             throw new Error('Space key and title are required');
         }
 
-        const createRequest: any = {
+        const createRequest: ConfluenceCreateRequest = {
             type: 'page',
             title: title,
             space: {
@@ -269,7 +269,7 @@ export class ConfluenceAPI {
                 throw new Error(`Failed to search pages: ${response.status} - ${response.text}`);
             }
 
-            const result = response.json as any;
+            const result = response.json as ConfluenceApiResponse;
             return result.results as ConfluencePage[];
         } catch (error) {
             if (error instanceof Error) {
@@ -395,9 +395,10 @@ export class ConfluenceAPI {
                     body: bodyString,  // Send as string instead of ArrayBuffer
                     throw: false // Don't throw, we'll handle errors
                 });
-            } catch (networkError: any) {
+            } catch (networkError: unknown) {
                 console.error('Network error during attachment upload:', networkError);
-                throw new Error(`Network error: ${networkError.message || networkError}`);
+                const errorMessage = networkError instanceof Error ? networkError.message : String(networkError);
+                throw new Error(`Network error: ${errorMessage}`);
             }
 
             // Check for XSRF error specifically
@@ -435,9 +436,10 @@ export class ConfluenceAPI {
                         console.error('Old endpoint also failed:', oldResponse.status, oldResponse.text);
                         throw new Error(`Both upload endpoints failed. Old endpoint returned: ${oldResponse.status}`);
                     }
-                } catch (oldError: any) {
+                } catch (oldError: unknown) {
                     console.error('Old endpoint error:', oldError);
-                    throw new Error(`XSRF check failed on modern API, old endpoint also failed: ${oldError.message}`);
+                    const errorMessage = oldError instanceof Error ? oldError.message : String(oldError);
+                    throw new Error(`XSRF check failed on modern API, old endpoint also failed: ${errorMessage}`);
                 }
             }
 
@@ -450,7 +452,7 @@ export class ConfluenceAPI {
                 throw new Error(`Failed to upload attachment: ${response.status} - ${response.text}`);
             }
 
-            const result = response.json as any;
+            const result = response.json as ConfluenceApiResponse;
 
             // Return the filename for reference in ac:image macro
             if (result.results && result.results.length > 0) {
